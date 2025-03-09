@@ -3,7 +3,8 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "mysql": "docker exec -it skeleton-app-mysql-1 bash -c \"mysql -uroot -ppassword\""
     },
     "devDependencies": {
         "axios": "^1.1.2",
