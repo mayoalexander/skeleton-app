@@ -20,24 +20,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/recipes/search', function (Request $request) {
-    $query = Recipe::query();
-
-    if ($request->filled('email')) {
-        $query->where('email', $request->email);
+    if (!$request->filled('keyword')) {
+        return response()->json(['error' => 'Keyword is required'], 400);
     }
 
-    if ($request->filled('keyword')) {
-        $query->where(function ($q) use ($request) {
-            $q->where('name', 'LIKE', "%{$request->keyword}%")
-                ->orWhere('description', 'LIKE', "%{$request->keyword}%")
-                ->orWhere('ingredients', 'LIKE', "%{$request->keyword}%")
-                ->orWhere('steps', 'LIKE', "%{$request->keyword}%");
-        });
-    }
+    // Step 1: Get IDs from Algolia Search
+    $recipeIds = Recipe::search($request->keyword)->get()->pluck('id');
 
-    if ($request->filled('ingredient')) {
-        $query->where('ingredients', 'LIKE', "%{$request->ingredient}%");
-    }
+    // Step 2: Fetch Full Recipes from Database with Relationships
+    $recipes = Recipe::whereIn('id', $recipeIds)
+        ->with(['ingredients', 'steps'])
+        ->paginate(10);
 
-    return response()->json($query->paginate(5)); // Change 5 to desired per-page value
+    return response()->json($recipes);
 });
