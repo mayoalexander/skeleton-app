@@ -20,33 +20,39 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/recipes/search', function (Request $request) {
-    // Require at least one search parameter.
+    $query = Recipe::query();
+
     if (!$request->filled('keyword') && !$request->filled('ingredient') && !$request->filled('author_email')) {
         return response()->json(['error' => 'At least one search parameter is required'], 400);
     }
 
-    // Use the provided keyword, or empty string if none.
-    $keyword = $request->input('keyword', '');
-
-    // Begin the Algolia search using Laravel Scout.
-    $searchQuery = Recipe::search($keyword);
-
-    // Apply filtering for the author's email if provided.
     if ($request->filled('author_email')) {
         $email = strtolower(trim($request->input('author_email')));
-        $searchQuery->where('author_email', $email);
+        $query->whereRaw('LOWER(author_email) = ?', [$email]);
     }
 
-    // Apply filtering for ingredient if provided.
-    // This assumes that your indexed recipe includes an "ingredients" attribute
-    // that is a flat array or string you can filter against.
     if ($request->filled('ingredient')) {
         $ingredient = $request->input('ingredient');
-        $searchQuery->where('ingredients', $ingredient);
+        $query->whereHas('ingredients', function ($q) use ($ingredient) {
+            $q->where('name', 'LIKE', "%{$ingredient}%");
+        });
     }
 
-    // Execute the search with pagination.
-    $recipes = $searchQuery->paginate(10);
+    if ($request->filled('keyword')) {
+        $keyword = $request->input('keyword');
+        $query->where(function ($q) use ($keyword) {
+            $q->where('name', 'LIKE', "%{$keyword}%")
+                ->orWhere('description', 'LIKE', "%{$keyword}%")
+                ->orWhereHas('ingredients', function ($q) use ($keyword) {
+                    $q->where('name', 'LIKE', "%{$keyword}%");
+                })
+                ->orWhereHas('steps', function ($q) use ($keyword) {
+                    $q->where('description', 'LIKE', "%{$keyword}%");
+                });
+        });
+    }
+
+    $recipes = $query->with(['ingredients', 'steps'])->paginate(10);
 
     return response()->json($recipes);
 });
