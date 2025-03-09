@@ -20,17 +20,33 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/recipes/search', function (Request $request) {
-    if (!$request->filled('keyword')) {
-        return response()->json(['error' => 'Keyword is required'], 400);
+    // Require at least one search parameter.
+    if (!$request->filled('keyword') && !$request->filled('ingredient') && !$request->filled('author_email')) {
+        return response()->json(['error' => 'At least one search parameter is required'], 400);
     }
 
-    // Step 1: Get IDs from Algolia Search
-    $recipeIds = Recipe::search($request->keyword)->get()->pluck('id');
+    // Use the provided keyword, or empty string if none.
+    $keyword = $request->input('keyword', '');
 
-    // Step 2: Fetch Full Recipes from Database with Relationships
-    $recipes = Recipe::whereIn('id', $recipeIds)
-        ->with(['ingredients', 'steps'])
-        ->paginate(10);
+    // Begin the Algolia search using Laravel Scout.
+    $searchQuery = Recipe::search($keyword);
+
+    // Apply filtering for the author's email if provided.
+    if ($request->filled('author_email')) {
+        $email = strtolower(trim($request->input('author_email')));
+        $searchQuery->where('author_email', $email);
+    }
+
+    // Apply filtering for ingredient if provided.
+    // This assumes that your indexed recipe includes an "ingredients" attribute
+    // that is a flat array or string you can filter against.
+    if ($request->filled('ingredient')) {
+        $ingredient = $request->input('ingredient');
+        $searchQuery->where('ingredients', $ingredient);
+    }
+
+    // Execute the search with pagination.
+    $recipes = $searchQuery->paginate(10);
 
     return response()->json($recipes);
 });

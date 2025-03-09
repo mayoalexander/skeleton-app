@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Ingredient;
 use App\Models\Recipe;
 use App\Models\Step;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -16,10 +17,16 @@ class RecipeSeeder extends Seeder
         $ingredientNames = ['Salt', 'Sugar', 'Garlic', 'Onion', 'Olive Oil', 'Butter', 'Milk', 'Eggs', 'Flour', 'Tomato'];
         $ingredients = collect($ingredientNames)->map(fn($name) => Ingredient::create(['name' => $name]));
 
+        // Get all user IDs to assign as authors
+        // $users = User::all();
+
         Recipe::factory()
             ->count(50)
             ->create()
             ->each(function ($recipe) use ($ingredients) {
+                // Assign random author to recipe
+                // $recipe->author()->associate($users->random())->save();
+
                 // Attach ingredients with randomized amounts
                 $recipe->ingredients()->attach(
                     $ingredients->random(min(rand(2, 6), $ingredients->count()))->pluck('id'),
@@ -33,7 +40,7 @@ class RecipeSeeder extends Seeder
                 for ($i = 1; $i <= rand(3, 6); $i++) {
                     Step::create([
                         'recipe_id' => $recipe->id,
-                        'step_number' => $i, // ✅ Correct numbering
+                        'step_number' => $i,
                         'description' => fake()->randomElement([
                             'Preheat oven to 350°F.',
                             'Chop and prepare all ingredients.',
