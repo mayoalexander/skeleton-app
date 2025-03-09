@@ -52,3 +52,16 @@ Or use any database GUI and connect to 127.0.0.1 port 3333
 
 Sometimes it's necessary to restart the nuxt app when adding new routes. Simply `ctrl+c` on the npm command execute
 `./vendor/bin/sail npm run dev --prefix frontend` again
+
+
+
+### ALEX MAYO's DEMO
+RUN SETUP:
+```
+./vendor/bin/sail artisan cache:clear
+./vendor/bin/sail artisan config:clear
+./vendor/bin/sail artisan migrate:fresh --seed
+
+./vendor/bin/sail artisan scout:flush "App\Models\Recipe"
+./vendor/bin/sail artisan scout:import "App\Models\Recipe"
+```
