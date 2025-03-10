@@ -15,6 +15,7 @@
                 @selectRecipe="selectRecipe"
                 v-if="recipes.length" 
             />
+            <UtilityNoResultsFound v-if="!recipes.length && !loading && (keyword || ingredient || authorEmail)" />
             <UtilityLoadingSpinner v-if="loading" />
             <Pagination
                 v-if="recipes.length"
@@ -42,8 +43,10 @@ import RecipeSearch from "./RecipeSearch.vue";
 import RecipeList from "./RecipeList.vue";
 import RecipeDetails from "./RecipeDetails.vue";
 import UtilityLoadingSpinner from "./Utility/LoadingSpinner.vue";
+import UtilityNoResultsFound from "./Utility/NoResultsFound.vue";
 import MainLayout from "./MainLayout.vue";
 import Pagination from "./Pagination.vue";
+
 
 const keyword = ref("");
 const ingredient = ref("");

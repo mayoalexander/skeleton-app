@@ -6,7 +6,7 @@
         <!-- 🍔 Mobile Menu Button (only shows on mobile) -->
         <button 
           @click="toggleSearch"
-          class="lg:hidden -m-2.5 p-2.5 text-gray-600 hover:text-gray-900"
+          class="lg:hidden -m-2.5 p-2.5 text-gray-600 hover:text-gray-900 search-button"
         >
           <span class="sr-only">Toggle Search</span>
           <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">

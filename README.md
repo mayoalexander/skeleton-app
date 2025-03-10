@@ -64,4 +64,14 @@ RUN SETUP:
 
 ./vendor/bin/sail artisan scout:flush "App\Models\Recipe"
 ./vendor/bin/sail artisan scout:import "App\Models\Recipe"
+
+### run the backend tests
+./vendor/bin/sail artisan test
+
+### Kickstart the nuxt frontend
+./vendor/bin/sail npm install --prefix frontend
+
+### Run the frontend
+./vendor/bin/sail npm run dev --prefix frontend
+
 ```

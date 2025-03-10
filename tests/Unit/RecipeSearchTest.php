@@ -54,7 +54,7 @@ class RecipeSearchTest extends TestCase
     public function testSearchByAuthorEmailReturnsMatchingRecipe()
     {
         $recipe = Recipe::factory()->create([
-            'author_email' => 'test@example.com',
+            'email' => 'test@example.com',
             'name' => 'Test Recipe',
         ]);
         $recipe->searchable();

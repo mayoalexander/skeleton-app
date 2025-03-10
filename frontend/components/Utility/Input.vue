@@ -9,7 +9,7 @@
       :type="type"
       :placeholder="placeholder"
       :required="required"
-      class="w-full p-2 border rounded-md focus:ring focus:ring-indigo-200"
+      class="w-full p-2 border rounded-md focus:ring focus:ring-indigo-200 utility-input"
     />
   </div>
 </template>

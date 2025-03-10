@@ -3,7 +3,7 @@
     <li 
       v-for="recipe in recipes" 
       :key="recipe.id" 
-      class="p-4 border rounded-lg shadow-md hover:bg-gray-100 cursor-pointer"
+      class="recipe-list-item p-4 border rounded-lg shadow-md hover:bg-gray-100 cursor-pointer"
       :class="{ 'border-yellow-400 bg-yellow-50' : selectedRecipe?.id === recipe.id }"
       @click="selectRecipe(recipe)"
     >

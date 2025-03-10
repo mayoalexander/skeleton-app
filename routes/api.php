@@ -28,7 +28,7 @@ Route::get('/recipes/search', function (Request $request) {
 
     if ($request->filled('author_email')) {
         $email = strtolower(trim($request->input('author_email')));
-        $query->whereRaw('LOWER(author_email) = ?', [$email]);
+        $query->whereRaw('LOWER(email) = ?', [$email]);
     }
 
     if ($request->filled('ingredient')) {

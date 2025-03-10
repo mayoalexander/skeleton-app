@@ -30,8 +30,8 @@ return new class extends Migration
         // ingredients pivot
         Schema::create('ingredient_recipe', function (Blueprint $table) {
             $table->id();
-            $table->text('measure_amount');
-            $table->text('measure_unit');
+            $table->text('measure_amount')->nullable();
+            $table->text('measure_unit')->nullable();
             $table->foreignId('recipe_id')->constrained();
             $table->foreignId('ingredient_id')->constrained();
         });
