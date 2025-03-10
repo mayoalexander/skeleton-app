@@ -16,6 +16,9 @@
         Step {{ step.step_number }}: {{ step.description }}
       </li>
     </ol>
+    <div>
+        <p class="font-bold mt-4">Author:</p>{{  recipe.email }}
+    </div>
   </div>
 </template>
 
