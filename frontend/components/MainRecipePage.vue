@@ -8,15 +8,21 @@
                 v-model:authorEmail="authorEmail" 
             />
         </template>    
-        
+
         <template #results>
+            
             <RecipeList 
                 :recipes="recipes" 
                 @selectRecipe="selectRecipe"
-                v-if="recipes.length" 
+                v-if="recipes.length || pendingSearch" 
             />
-            <UtilityNoResultsFound v-if="!recipes.length && !loading && (keyword || ingredient || authorEmail)" />
-            <UtilityLoadingSpinner v-if="loading" />
+
+            
+            <UtilityNoResultsFound v-if="!loading && !pendingSearch && recipes.length === 0 && (keyword || ingredient || authorEmail)" />
+
+
+            <UtilityLoadingSpinner v-if="loading && !pendingSearch" />
+
             <Pagination
                 v-if="recipes.length"
                 :prevPageUrl="prevPageUrl"
@@ -47,12 +53,12 @@ import UtilityNoResultsFound from "./Utility/NoResultsFound.vue";
 import MainLayout from "./MainLayout.vue";
 import Pagination from "./Pagination.vue";
 
-
 const keyword = ref("");
 const ingredient = ref("");
 const authorEmail = ref("");
 const recipes = ref([]);
 const loading = ref(false);
+const pendingSearch = ref(false); // ✅ Track debounce status
 const currentPage = ref(1);
 const totalPages = ref(1);
 const prevPageUrl = ref(null);
@@ -68,6 +74,8 @@ const selectRecipe = (recipe) => {
 
 const fetchRecipes = async () => {
   loading.value = true;
+  pendingSearch.value = false; // ✅ Reset pending status once actual fetch starts
+
   try {
     const url = "http://localhost:8888/api/recipes/search";
     const params = { keyword: keyword.value, ingredient: ingredient.value, author_email: authorEmail.value };
@@ -81,9 +89,19 @@ const fetchRecipes = async () => {
   } catch (error) {
     console.error("Error fetching recipes:", error);
   }
+
   loading.value = false;
 };
 
-// ✅ Watch for input changes with debounce
-watch([keyword, ingredient, authorEmail], debounce(fetchRecipes, 1500));
+// ✅ Debounced function that prevents flickering
+const debouncedFetch = debounce(() => {
+  pendingSearch.value = false; // ✅ Reset pending state when debounce ends
+  fetchRecipes();
+}, 1500);
+
+// ✅ Watch for input changes, but prevent flickering
+watch([keyword, ingredient, authorEmail], () => {
+  pendingSearch.value = true; // ✅ Show previous results while debounce runs
+  debouncedFetch();
+});
 </script>
