@@ -4,7 +4,8 @@
       v-for="recipe in recipes" 
       :key="recipe.id" 
       class="p-4 border rounded-lg shadow-md hover:bg-gray-100 cursor-pointer"
-      @click="$emit('selectRecipe', recipe)"
+      :class="{ 'border-yellow-400 bg-yellow-50' : selectedRecipe?.id === recipe.id }"
+      @click="selectRecipe(recipe)"
     >
       <h2 class="text-xl font-semibold">{{ recipe.name }}</h2>
       <p class="text-gray-600 italic">{{ recipe.description }}</p>
@@ -13,6 +14,20 @@
 </template>
 
 <script setup>
+import { ref, nextTick } from "vue";
+
 defineProps(["recipes"]);
-defineEmits(["selectRecipe"]);
+const emit = defineEmits(["selectRecipe"]);
+
+
+const selectedRecipe = ref(null);
+
+const selectRecipe = async (recipe) => {
+    selectedRecipe.value = recipe;
+    emit("selectRecipe", recipe);
+
+    // Scroll to top of the list when an item is clicked
+    await nextTick();
+    document.querySelector(".selected-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
+};
 </script>

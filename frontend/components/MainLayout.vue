@@ -42,7 +42,7 @@
 
       <!-- 📜 Main Content (Results) -->
       <main class="flex-1">
-        <div class="block xl:hidden mb-4">
+        <div class="block xl:hidden mb-4 selected-results">
             <slot name="selected" />
         </div>
         
