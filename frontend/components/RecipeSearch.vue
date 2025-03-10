@@ -8,18 +8,19 @@
     />
 
     <UtilityInput 
+      :modelValue="authorEmail"
+      @update:modelValue="$emit('update:authorEmail', $event)"
+      label="Author Email" 
+      placeholder="Enter author email..." 
+    />
+
+    <UtilityInput 
       :modelValue="ingredient"
       @update:modelValue="$emit('update:ingredient', $event)"
       label="Ingredient" 
       placeholder="Search by ingredient..." 
     />
 
-    <UtilityInput 
-      :modelValue="authorEmail"
-      @update:modelValue="$emit('update:authorEmail', $event)"
-      label="Author Email" 
-      placeholder="Enter author email..." 
-    />
   </div>
 </template>
 

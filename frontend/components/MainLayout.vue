@@ -24,13 +24,11 @@
 
       <main class="flex-1">
         <!-- Main area -->
-         results
          <slot name="results" />
       </main>
 
       <aside class="sticky top-8 hidden w-96 shrink-0 xl:block">
-        <!-- Right column area -->
-         right
+        <slot name="selected" />
       </aside>
     </div>
   </div>
