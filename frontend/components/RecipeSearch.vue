@@ -1,37 +1,29 @@
 <template>
   <div class="search-container">
-    <input 
-      :value="keyword" 
-      @input="$emit('update:keyword', $event.target.value)"
-      placeholder="Keyword (name, description, steps, ingredients)..." 
-      class="search-input" 
+    <UtilityInput 
+      :modelValue="keyword"
+      @update:modelValue="$emit('update:keyword', $event)"
+      label="Keyword" 
+      placeholder="Search by name, description, steps, ingredients..." 
     />
-    
-    <input 
-      :value="ingredient" 
-      @input="$emit('update:ingredient', $event.target.value)"
-      placeholder="Ingredient..." 
-      class="search-input" 
+
+    <UtilityInput 
+      :modelValue="ingredient"
+      @update:modelValue="$emit('update:ingredient', $event)"
+      label="Ingredient" 
+      placeholder="Search by ingredient..." 
     />
-    
-    <input 
-      :value="authorEmail" 
-      @input="$emit('update:authorEmail', $event.target.value)"
-      placeholder="Author email..." 
-      class="search-input" 
+
+    <UtilityInput 
+      :modelValue="authorEmail"
+      @update:modelValue="$emit('update:authorEmail', $event)"
+      label="Author Email" 
+      placeholder="Enter author email..." 
     />
   </div>
 </template>
 
 <script setup>
 defineProps(["keyword", "ingredient", "authorEmail"]);
+defineEmits(["update:keyword", "update:ingredient", "update:authorEmail"]);
 </script>
-
-<style scoped>
-.search-container {
-  @apply w-full mb-4;
-}
-.search-input {
-  @apply w-full p-2 border rounded-md mb-2;
-}
-</style>
