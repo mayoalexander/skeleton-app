@@ -28,9 +28,9 @@
       <UtilityLabel>Select Ingredients</UtilityLabel>
       <div 
         v-for="item in ingredients" :key="item.id"
-        class="px-4 py-2 rounded-md inline-block mb-2 mr-2 hover:cursor-pointer ingredient-item"
+        class="px-4 py-2 inline-block mb-2 mr-2 hover:cursor-pointer ingredient-item border-b-4"
         :class="{
-          'bg-yellow-200 text-gray-800': item.name === ingredient,
+          'bg-yellow-200 text-gray-800  border-yellow-400': item.name === ingredient,
           'bg-gray-100 text-gray-700 hover:bg-yellow-100 hover:text-gray-800': item.name !== ingredient
         }"
         @click="$emit('update:ingredient', item.name)">

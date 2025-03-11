@@ -3,6 +3,10 @@
     <button 
       @click="$emit('paginate', currentPage - 1)" 
       :disabled="!prevPageUrl" 
+      :class="{
+        'bg-yellow-200 text-gray-800  border-yellow-400': prevPageUrl,
+          'bg-gray-100 text-gray-700 hover:bg-yellow-100 hover:text-gray-800': !prevPageUrl
+      }"
       class="px-4 py-2 bg-gray-300 rounded disabled:opacity-50 pagination-back"
     >
       Previous
@@ -13,7 +17,11 @@
     <button 
       @click="$emit('paginate', currentPage + 1)" 
       :disabled="!nextPageUrl" 
-      class="px-4 py-2 bg-gray-300 rounded disabled:opacity-50 pagination-next"
+      :class="{
+        'bg-yellow-200 text-gray-800  border-yellow-400': !prevPageUrl,
+          'bg-gray-100 text-gray-700 hover:bg-yellow-100 hover:text-gray-800': prevPageUrl
+      }"
+      class="px-4 py-2 bg-gray-300 rounded disabled:opacity-50 pagination-next border-b-4"
     >
       Next
     </button>
