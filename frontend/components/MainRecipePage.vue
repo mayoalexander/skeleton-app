@@ -11,7 +11,6 @@
         </template>    
 
         <template #results>
-            
             <RecipeList 
                 :recipes="recipes" 
                 @selectRecipe="selectRecipe"
@@ -82,17 +81,23 @@ const fetchIngredients = async () => {
   }
 };
 
-// ✅ Fetch recipes from API
-const fetchRecipes = async () => {
+// ✅ Fetch recipes from API (Handles pagination properly)
+const fetchRecipes = async (page = 1) => {
   loading.value = true;
   pendingSearch.value = false;
+  currentPage.value = page; // ✅ Set current page properly
 
   try {
-    const params = { keyword: keyword.value, ingredient: ingredient.value, author_email: authorEmail.value };
+    const params = { 
+      keyword: keyword.value, 
+      ingredient: ingredient.value, 
+      author_email: authorEmail.value,
+      page: page // ✅ Pass page parameter
+    };
+
     const { data } = await axios.get("http://localhost:8888/api/recipes/search", { params });
 
     recipes.value = data.data;
-    currentPage.value = data.current_page;
     totalPages.value = data.last_page;
     prevPageUrl.value = data.prev_page_url;
     nextPageUrl.value = data.next_page_url;
@@ -106,7 +111,7 @@ const fetchRecipes = async () => {
 // ✅ Debounced search function
 const debouncedFetch = debounce(() => {
   pendingSearch.value = false;
-  fetchRecipes();
+  fetchRecipes(1); // ✅ Always reset to page 1 when searching
 }, 1500);
 
 // ✅ Fetch ingredients when the component mounts
