@@ -1,7 +1,7 @@
 <template>
   <div class="flex min-h-full flex-col">
     <header class="shrink-0 border-b border-gray-200 bg-white">
-      <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div class="mx-auto flex h-16 w-full items-center justify-between px-4 sm:px-6 lg:px-8">
         
         <!-- 🍔 Mobile Menu Button (only shows on mobile) -->
         <button 
@@ -18,12 +18,12 @@
         <h1 class="text-xl font-semibold text-gray-800">Recipe Search 3000</h1>
 
         <!-- 🔐 Login Placeholder (Replaces User Icon) -->
-        <button class="flex items-center gap-2 text-gray-700 hover:text-gray-900">
+        <!-- <button class="flex items-center gap-2 text-gray-700 hover:text-gray-900">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 0 0-8 0v2M12 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8z" />
           </svg>
           <span class="hidden sm:inline">Login</span>
-        </button>
+        </button> -->
       </div>
     </header>
 
@@ -32,6 +32,7 @@
       
       <!-- 📏 Sidebar: Shows Search (ALWAYS visible on desktop, toggles on mobile) -->
       <aside 
+      class="sticky top-8"
         :class="[
           'lg:block lg:w-96 hidden',
           isSearchOpen ? 'block' : 'hidden lg:block'

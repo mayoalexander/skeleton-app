@@ -1,40 +1,41 @@
 <template>
   <div class="">
     <MainLayout>
-        <template #search>
-            <RecipeSearch 
-                v-model:keyword="keyword" 
-                v-model:ingredient="ingredient" 
-                v-model:authorEmail="authorEmail" 
-                :ingredients="allIngredients" 
-            />
-        </template>    
+      <template #search>
+        <RecipeSearch 
+          v-model:keyword="keyword" 
+          v-model:ingredient="ingredient" 
+          v-model:authorEmail="authorEmail" 
+          :ingredients="allIngredients" 
+        />
+      </template>    
 
-        <template #results>
-            <RecipeList 
-                :recipes="recipes" 
-                @selectRecipe="selectRecipe"
-                v-if="recipes.length || pendingSearch" 
-            />
+      <template #results>
+        <RecipeList 
+          :recipes="recipes" 
+          @selectRecipe="selectRecipe"
+          v-if="recipes.length || pendingSearch" 
+        />
 
-            <UtilityNoResultsFound v-if="!loading && !pendingSearch && recipes.length === 0 && (keyword || ingredient || authorEmail)" />
+        <UtilityNoResultsFound v-if="!loading && !pendingSearch && recipes.length === 0 && (keyword || ingredient || authorEmail)" />
 
-            <UtilityLoadingSpinner v-if="loading"/>
+        <UtilityLoadingSpinner v-if="loading"/>
 
-            <Pagination
-                v-if="recipes.length"
-                :prevPageUrl="prevPageUrl"
-                :nextPageUrl="nextPageUrl"
-                :currentPage="currentPage"
-                :totalPages="totalPages"
-                @paginate="fetchRecipes"
-            />
-        </template>    
+        <Pagination
+          v-if="recipes.length"
+          :prevPageUrl="prevPageUrl"
+          :nextPageUrl="nextPageUrl"
+          :currentPage="currentPage"
+          :totalPages="totalPages"
+          @paginate="fetchRecipes"
+        />
+      </template>    
 
-        <template #selected>
-            <RecipeDetails v-if="selectedRecipe" :recipe="selectedRecipe" />
-            <!-- <p v-else class="text-gray-500 text-center">Select a recipe to view details.</p> -->
-        </template>    
+      <template #selected>
+        <transition name="fade-slide" mode="out-in">
+          <RecipeDetails v-if="selectedRecipe" :recipe="selectedRecipe" :key="selectedRecipe.id" />
+        </transition>
+      </template>    
     </MainLayout>
   </div>
 </template>
@@ -103,6 +104,7 @@ const fetchIngredients = async () => {
 
 // ✅ Fetch recipes from API (Handles pagination properly)
 const fetchRecipes = async (page = 1) => {
+  recipes.value = []
   loading.value = true;
   pendingSearch.value = false;
   currentPage.value = page; // ✅ Set current page properly
@@ -163,3 +165,19 @@ watch([keyword, ingredient, authorEmail], () => {
   debouncedFetch();
 });
 </script>
+<style scoped>
+/* ✨ Fade and Slide Animation */
+.fade-slide-enter-active, .fade-slide-leave-active {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateX(40px);
+}
+</style>
