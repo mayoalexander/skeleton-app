@@ -7,7 +7,9 @@
       :class="{ 'border-yellow-400 bg-yellow-50 text-yellow-500' : selectedRecipe?.id === recipe.id }"
       @click="selectRecipe(recipe)"
     >
-      <h2 class="text-xl font-semibold">{{ recipe.name }}</h2>
+      <h2 class="text-xl font-semibold">
+        <NuxtLink :to="'/recipe/' + recipe.slug">{{ recipe.name }}</NuxtLink>
+      </h2>
       <p class="text-gray-600 italic">{{ recipe.description }}</p>
     </li>
   </ul>

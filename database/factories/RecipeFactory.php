@@ -20,9 +20,11 @@ class RecipeFactory extends Factory
             'Stuffed Bell Peppers'
         ];
 
-        return [
-            'name' => $this->faker->randomElement($recipeNames), // ✅ Use real recipe names
-            'slug' => Str::slug($this->faker->randomElement($recipeNames)),
+        $name = $this->faker->randomElement($recipeNames);
+
+        return [    
+            'name' => $name,
+            'slug' => Str::slug($name),
             'description' => $this->faker->sentence(10),
             'email' => $this->faker->safeEmail
         ];

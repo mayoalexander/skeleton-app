@@ -19,7 +19,7 @@
 
             <UtilityNoResultsFound v-if="!loading && !pendingSearch && recipes.length === 0 && (keyword || ingredient || authorEmail)" />
 
-            <UtilityLoadingSpinner v-if="loading && !pendingSearch" />
+            <UtilityLoadingSpinner v-if="loading"/>
 
             <Pagination
                 v-if="recipes.length"
@@ -33,7 +33,7 @@
 
         <template #selected>
             <RecipeDetails v-if="selectedRecipe" :recipe="selectedRecipe" />
-            <p v-else class="text-gray-500 text-center">Select a recipe to view details.</p>
+            <!-- <p v-else class="text-gray-500 text-center">Select a recipe to view details.</p> -->
         </template>    
     </MainLayout>
   </div>
@@ -50,6 +50,10 @@ import UtilityLoadingSpinner from "./Utility/LoadingSpinner.vue";
 import UtilityNoResultsFound from "./Utility/NoResultsFound.vue";
 import MainLayout from "./MainLayout.vue";
 import Pagination from "./Pagination.vue";
+
+const route = useRoute(); // ✅ Use Nuxt's `useRoute()`
+const router = useRouter();
+
 
 const keyword = ref("");
 const ingredient = ref("");
@@ -69,6 +73,22 @@ const selectedRecipe = ref(null);
 // ✅ Function to update the selected recipe
 const selectRecipe = (recipe) => {
   selectedRecipe.value = recipe;
+
+  console.log({
+    recipe
+  })
+  
+    // ✅ Update URL when selecting a recipe
+  router.push({
+    path: `/recipes/${recipe.slug}`, // Update to use recipe slug
+    // query: { 
+    //   keyword: keyword.value, 
+    //   ingredient: ingredient.value, 
+    //   author_email: authorEmail.value,
+    //   page: currentPage.value,
+    //   recipeSlug: recipe.slug // ✅ Save selected recipe in query
+    // },
+  });
 };
 
 // ✅ Fetch all ingredients when component mounts
@@ -101,6 +121,23 @@ const fetchRecipes = async (page = 1) => {
     totalPages.value = data.last_page;
     prevPageUrl.value = data.prev_page_url;
     nextPageUrl.value = data.next_page_url;
+
+
+    router.push({
+      path: `/`,
+      query: Object.fromEntries(
+        Object.entries({
+          keyword: keyword.value || null,
+          ingredient: ingredient.value || null,
+          author_email: authorEmail.value || null,
+          page: currentPage.value > 1 ? currentPage.value : null, // Only add page if > 1
+          recipeSlug: selectedRecipe.value?.slug || null, // Only add if a recipe is selected
+        }).filter(([_, v]) => v !== null) // ✅ Remove null values
+      ),
+    });
+
+    
+    
   } catch (error) {
     console.error("Error fetching recipes:", error);
   }
@@ -111,6 +148,11 @@ const fetchRecipes = async (page = 1) => {
 // ✅ Debounced search function
 const debouncedFetch = debounce(() => {
   pendingSearch.value = false;
+  
+  // if still searching, update the URL
+
+  // if seelcted, set the URL to the detail
+  
   fetchRecipes(1); // ✅ Always reset to page 1 when searching
 }, 1500);
 
@@ -120,7 +162,9 @@ onMounted(() => {
 });
 
 // ✅ Watch for input changes, but prevent flickering
-watch([keyword, ingredient, authorEmail], () => {
+watch([keyword, ingredient, authorEmail, selectedRecipe], () => {
+  recipes.value = []
+  loading.value = true
   pendingSearch.value = true;
   debouncedFetch();
 });

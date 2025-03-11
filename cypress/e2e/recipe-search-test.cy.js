@@ -48,6 +48,19 @@ describe("Recipe Search", () => {
         cy.get(".recipe-list-item h2").should("contain", "Caesar Salad");
     });
 
+    it("Searches by ingredient and returns the expected recipe by selectors", () => {
+        cy.get(".ingredient-selectors .ingredient-item")
+            .should("exist")
+            .eq(1)
+            .click();
+        cy.get(".ingredient-selectors .ingredient-item")
+            .should("exist")
+            .eq(2)
+            .click();
+
+        cy.get(".recipe-list-item h2").should("contain", "Caesar Salad");
+    });
+
     it("Handles no results gracefully", () => {
         cy.get(".utility-input").should("exist").eq(2).type("magicRecipieThatDoesntExist").wait(1500);
 
