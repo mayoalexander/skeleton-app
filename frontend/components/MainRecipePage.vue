@@ -107,22 +107,7 @@ const fetchRecipes = async (page = 1) => {
   pendingSearch.value = false;
   currentPage.value = page; // ✅ Set current page properly
 
-  try {
-
-
-    router.push({
-      path: `/`,
-      query: Object.fromEntries(
-        Object.entries({
-          keyword: keyword.value || null,
-          ingredient: ingredient.value || null,
-          author_email: authorEmail.value || null,
-          page: currentPage.value > 1 ? currentPage.value : null, // Only add page if > 1
-          recipeSlug: selectedRecipe.value?.slug || null, // Only add if a recipe is selected
-        }).filter(([_, v]) => v !== null) // ✅ Remove null values
-      ),
-    });
-    
+  try {    
     const params = { 
       keyword: keyword.value, 
       ingredient: ingredient.value, 
@@ -136,10 +121,6 @@ const fetchRecipes = async (page = 1) => {
     totalPages.value = data.last_page;
     prevPageUrl.value = data.prev_page_url;
     nextPageUrl.value = data.next_page_url;
-
-
-
-    
     
   } catch (error) {
     console.error("Error fetching recipes:", error);
@@ -151,11 +132,6 @@ const fetchRecipes = async (page = 1) => {
 // ✅ Debounced search function
 const debouncedFetch = debounce(() => {
   pendingSearch.value = false;
-  
-  // if still searching, update the URL
-
-  // if seelcted, set the URL to the detail
-  
   fetchRecipes(1); // ✅ Always reset to page 1 when searching
 }, 1500);
 
@@ -165,10 +141,25 @@ onMounted(() => {
 });
 
 // ✅ Watch for input changes, but prevent flickering
-watch([keyword, ingredient, authorEmail, selectedRecipe], () => {
+watch([keyword, ingredient, authorEmail], () => {
   recipes.value = []
   loading.value = true
   pendingSearch.value = true;
+
+  // update the URL
+  router.push({
+    path: `/`,
+    query: Object.fromEntries(
+      Object.entries({
+        keyword: keyword.value || null,
+        ingredient: ingredient.value || null,
+        author_email: authorEmail.value || null,
+        page: currentPage.value > 1 ? currentPage.value : null, // Only add page if > 1
+        recipeSlug: selectedRecipe.value?.slug || null, // Only add if a recipe is selected
+      }).filter(([_, v]) => v !== null) // ✅ Remove null values
+    ),
+  });
+  
   debouncedFetch();
 });
 </script>
