@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 border rounded-lg shadow-lg">
+  <div class="p-6 rounded-b-lg shadow-lg border-t-4 border-yellow-400 bg-yellow-100">
     <h2 class="text-2xl font-bold">{{ recipe.name }}</h2>
     <p class="text-gray-700">{{ recipe.description }}</p>
 

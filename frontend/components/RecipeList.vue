@@ -3,8 +3,8 @@
     <li 
       v-for="recipe in recipes" 
       :key="recipe.id" 
-      class="recipe-list-item p-4 border rounded-lg shadow-md hover:bg-gray-100 cursor-pointer"
-      :class="{ 'border-yellow-400 bg-yellow-50' : selectedRecipe?.id === recipe.id }"
+      class="recipe-list-item p-4 border rounded-lg hover:bg-gray-100 cursor-pointer"
+      :class="{ 'border-yellow-400 bg-yellow-50 text-yellow-500' : selectedRecipe?.id === recipe.id }"
       @click="selectRecipe(recipe)"
     >
       <h2 class="text-xl font-semibold">{{ recipe.name }}</h2>
@@ -29,5 +29,6 @@ const selectRecipe = async (recipe) => {
     // Scroll to top of the list when an item is clicked
     await nextTick();
     document.querySelector(".selected-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    
 };
 </script>
