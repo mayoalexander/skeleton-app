@@ -108,6 +108,21 @@ const fetchRecipes = async (page = 1) => {
   currentPage.value = page; // ✅ Set current page properly
 
   try {
+
+
+    router.push({
+      path: `/`,
+      query: Object.fromEntries(
+        Object.entries({
+          keyword: keyword.value || null,
+          ingredient: ingredient.value || null,
+          author_email: authorEmail.value || null,
+          page: currentPage.value > 1 ? currentPage.value : null, // Only add page if > 1
+          recipeSlug: selectedRecipe.value?.slug || null, // Only add if a recipe is selected
+        }).filter(([_, v]) => v !== null) // ✅ Remove null values
+      ),
+    });
+    
     const params = { 
       keyword: keyword.value, 
       ingredient: ingredient.value, 
@@ -123,18 +138,6 @@ const fetchRecipes = async (page = 1) => {
     nextPageUrl.value = data.next_page_url;
 
 
-    router.push({
-      path: `/`,
-      query: Object.fromEntries(
-        Object.entries({
-          keyword: keyword.value || null,
-          ingredient: ingredient.value || null,
-          author_email: authorEmail.value || null,
-          page: currentPage.value > 1 ? currentPage.value : null, // Only add page if > 1
-          recipeSlug: selectedRecipe.value?.slug || null, // Only add if a recipe is selected
-        }).filter(([_, v]) => v !== null) // ✅ Remove null values
-      ),
-    });
 
     
     
