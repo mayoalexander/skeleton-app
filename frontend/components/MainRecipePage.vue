@@ -6,6 +6,7 @@
                 v-model:keyword="keyword" 
                 v-model:ingredient="ingredient" 
                 v-model:authorEmail="authorEmail" 
+                :ingredients="allIngredients" 
             />
         </template>    
 
@@ -17,9 +18,7 @@
                 v-if="recipes.length || pendingSearch" 
             />
 
-            
             <UtilityNoResultsFound v-if="!loading && !pendingSearch && recipes.length === 0 && (keyword || ingredient || authorEmail)" />
-
 
             <UtilityLoadingSpinner v-if="loading && !pendingSearch" />
 
@@ -42,7 +41,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import axios from "axios";
 import { debounce } from "lodash";
 import RecipeSearch from "./RecipeSearch.vue";
@@ -57,8 +56,9 @@ const keyword = ref("");
 const ingredient = ref("");
 const authorEmail = ref("");
 const recipes = ref([]);
+const allIngredients = ref([]); // ✅ Store all ingredients
 const loading = ref(false);
-const pendingSearch = ref(false); // ✅ Track debounce status
+const pendingSearch = ref(false);
 const currentPage = ref(1);
 const totalPages = ref(1);
 const prevPageUrl = ref(null);
@@ -72,14 +72,24 @@ const selectRecipe = (recipe) => {
   selectedRecipe.value = recipe;
 };
 
+// ✅ Fetch all ingredients when component mounts
+const fetchIngredients = async () => {
+  try {
+    const { data } = await axios.get("http://localhost:8888/api/ingredients");
+    allIngredients.value = data;
+  } catch (error) {
+    console.error("Error fetching ingredients:", error);
+  }
+};
+
+// ✅ Fetch recipes from API
 const fetchRecipes = async () => {
   loading.value = true;
-  pendingSearch.value = false; // ✅ Reset pending status once actual fetch starts
+  pendingSearch.value = false;
 
   try {
-    const url = "http://localhost:8888/api/recipes/search";
     const params = { keyword: keyword.value, ingredient: ingredient.value, author_email: authorEmail.value };
-    const { data } = await axios.get(url, { params });
+    const { data } = await axios.get("http://localhost:8888/api/recipes/search", { params });
 
     recipes.value = data.data;
     currentPage.value = data.current_page;
@@ -93,15 +103,20 @@ const fetchRecipes = async () => {
   loading.value = false;
 };
 
-// ✅ Debounced function that prevents flickering
+// ✅ Debounced search function
 const debouncedFetch = debounce(() => {
-  pendingSearch.value = false; // ✅ Reset pending state when debounce ends
+  pendingSearch.value = false;
   fetchRecipes();
 }, 1500);
 
+// ✅ Fetch ingredients when the component mounts
+onMounted(() => {
+  fetchIngredients();
+});
+
 // ✅ Watch for input changes, but prevent flickering
 watch([keyword, ingredient, authorEmail], () => {
-  pendingSearch.value = true; // ✅ Show previous results while debounce runs
+  pendingSearch.value = true;
   debouncedFetch();
 });
 </script>

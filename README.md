@@ -74,4 +74,8 @@ RUN SETUP:
 ### Run the frontend
 ./vendor/bin/sail npm run dev --prefix frontend
 
+
+### run the cypress tests in the cypress UI (usually would test this against staging)
+npm run cypress:install; npm run cypress:open
+
 ```

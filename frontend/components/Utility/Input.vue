@@ -1,8 +1,8 @@
 <template>
   <div class="w-full mb-4">
-    <label v-if="label" class="block text-gray-700 font-medium mb-1">
+    <UtilityLabel v-if="label">
       {{ label }} <span v-if="required" class="text-red-500">*</span>
-    </label>
+    </UtilityLabel>
     <input
       :value="modelValue"
       @input="$emit('update:modelValue', $event.target.value)"

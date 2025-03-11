@@ -32,10 +32,10 @@ describe("Recipe Search", () => {
         cy.get(".utility-input")
             .should("exist")
             .eq(1)
-            .type("vhowell@example.net")
+            .type("johndoe@wildalaskan.com")
             .wait(1500);
 
-        cy.get(".recipe-list-item h2").should("contain", "Caesar Salad");
+        cy.get(".recipe-list-item h2").should("contain", "Wild Salmon Caesar Salad");
     });
 
     it("Searches by ingredient and returns the expected recipe", () => {
