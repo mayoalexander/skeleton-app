@@ -41,7 +41,7 @@
       </aside>
 
       <!-- 📜 Main Content (Results) -->
-      <main class="flex-1">
+      <main class="flex-1 max-w-3xl">
         <div class="block xl:hidden mb-4 selected-results">
             <slot name="selected" />
         </div>
@@ -50,7 +50,8 @@
       </main>
 
       <!-- 📌 Right Column: Selected Recipe (ALWAYS visible on desktop) -->
-      <aside class="sticky top-8 hidden w-96 shrink-0 xl:block">
+      <aside class="sticky top-8 hidden w-96 shrink-0 xl:block"
+        style="width:520px">
         <slot name="selected" />
       </aside>
     </div>
