@@ -32,7 +32,9 @@ Route::get('/recipes/search', function (Request $request) {
     $query = Recipe::query();
 
     if (!$request->filled('keyword') && !$request->filled('ingredient') && !$request->filled('author_email')) {
-        return response()->json(['error' => 'At least one search parameter is required'], 400);
+        $allRecipes = Recipe::paginate();
+        // $allRecipes = Recipe::all();
+        return response()->json($allRecipes);
     }
 
     if ($request->filled('author_email')) {

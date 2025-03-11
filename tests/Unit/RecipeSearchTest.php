@@ -14,15 +14,15 @@ class RecipeSearchTest extends TestCase
     /**
      * Test that the endpoint returns an error when no search parameters are provided.
      */
-    public function testSearchReturnsErrorWhenNoParametersProvided()
-    {
-        $response = $this->getJson('/api/recipes/search');
+    // public function testSearchReturnsErrorWhenNoParametersProvided()
+    // {
+    //     $response = $this->getJson('/api/recipes/search');
 
-        $response->assertStatus(400)
-            ->assertJson([
-                'error' => 'At least one search parameter is required'
-            ]);
-    }
+    //     $response->assertStatus(400)
+    //         ->assertJson([
+    //             'error' => 'At least one search parameter is required'
+    //         ]);
+    // }
 
     /**
      * Test searching by keyword returns the expected recipe.

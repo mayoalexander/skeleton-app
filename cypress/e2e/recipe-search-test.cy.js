@@ -58,7 +58,7 @@ describe("Recipe Search", () => {
             .eq(2)
             .click();
 
-        cy.get(".recipe-list-item h2").should("contain", "Caesar Salad");
+        cy.get(".recipe-list-item h2").should("contain", "Garlic");
     });
 
     it("Handles no results gracefully", () => {

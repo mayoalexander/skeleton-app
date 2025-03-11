@@ -27,7 +27,7 @@
           :nextPageUrl="nextPageUrl"
           :currentPage="currentPage"
           :totalPages="totalPages"
-          @paginate="fetchRecipes"
+          @paginate="paginate"
         />
       </template>    
 
@@ -42,6 +42,7 @@
 
 <script setup>
 import { ref, watch, onMounted } from "vue";
+import { useRoute, useRouter } from "#app";
 import axios from "axios";
 import { debounce } from "lodash";
 import RecipeSearch from "./RecipeSearch.vue";
@@ -52,47 +53,29 @@ import UtilityNoResultsFound from "./Utility/NoResultsFound.vue";
 import MainLayout from "./MainLayout.vue";
 import Pagination from "./Pagination.vue";
 
-const route = useRoute(); // ✅ Use Nuxt's `useRoute()`
+const route = useRoute();
 const router = useRouter();
-
 
 const keyword = ref("");
 const ingredient = ref("");
 const authorEmail = ref("");
 const recipes = ref([]);
-const allIngredients = ref([]); // ✅ Store all ingredients
+const allIngredients = ref([]);
 const loading = ref(false);
 const pendingSearch = ref(false);
 const currentPage = ref(1);
 const totalPages = ref(1);
 const prevPageUrl = ref(null);
 const nextPageUrl = ref(null);
-
-// ✅ Track the selected recipe
 const selectedRecipe = ref(null);
 
-// ✅ Function to update the selected recipe
 const selectRecipe = (recipe) => {
   selectedRecipe.value = recipe;
-
-  console.log({
-    recipe
-  })
-  
-    // ✅ Update URL when selecting a recipe
   router.push({
-    path: `/recipes/${recipe.slug}`, // Update to use recipe slug
-    // query: { 
-    //   keyword: keyword.value, 
-    //   ingredient: ingredient.value, 
-    //   author_email: authorEmail.value,
-    //   page: currentPage.value,
-    //   recipeSlug: recipe.slug // ✅ Save selected recipe in query
-    // },
+    path: `/recipes/${recipe.slug}`,
   });
 };
 
-// ✅ Fetch all ingredients when component mounts
 const fetchIngredients = async () => {
   try {
     const { data } = await axios.get("http://localhost:8888/api/ingredients");
@@ -102,19 +85,18 @@ const fetchIngredients = async () => {
   }
 };
 
-// ✅ Fetch recipes from API (Handles pagination properly)
 const fetchRecipes = async (page = 1) => {
-  recipes.value = []
+  recipes.value = [];
   loading.value = true;
   pendingSearch.value = false;
-  currentPage.value = page; // ✅ Set current page properly
+  currentPage.value = page;
 
-  try {    
-    const params = { 
-      keyword: keyword.value, 
-      ingredient: ingredient.value, 
-      author_email: authorEmail.value,
-      page: page // ✅ Pass page parameter
+  try {
+    const params = {
+      keyword: keyword.value || null,
+      ingredient: ingredient.value || null,
+      author_email: authorEmail.value || null,
+      page: page > 1 ? page : null,
     };
 
     const { data } = await axios.get("http://localhost:8888/api/recipes/search", { params });
@@ -123,31 +105,50 @@ const fetchRecipes = async (page = 1) => {
     totalPages.value = data.last_page;
     prevPageUrl.value = data.prev_page_url;
     nextPageUrl.value = data.next_page_url;
-    
+
   } catch (error) {
     console.error("Error fetching recipes:", error);
   }
-
   loading.value = false;
 };
 
-// ✅ Debounced search function
-const debouncedFetch = debounce(() => {
-  pendingSearch.value = false;
-  fetchRecipes(1); // ✅ Always reset to page 1 when searching
-}, 1500);
+// ✅ Load query parameters when the page loads
+onMounted(async () => {
+  await fetchIngredients();
 
-// ✅ Fetch ingredients when the component mounts
-onMounted(() => {
-  fetchIngredients();
+  
+  
+  // ✅ Check if search params exist and load them
+  keyword.value = route.query.keyword || "";
+  ingredient.value = route.query.ingredient || "";
+  authorEmail.value = route.query.author_email || "";
+  currentPage.value = route.query.page ? parseInt(route.query.page) : 1;
+
+  // TODO: always fetch recipes, but only apply the 
+  await fetchRecipes(currentPage.value);
+
+  // ✅ If a recipe slug is in the URL, fetch it
+  if (route.path.includes('/recipes/')) {
+    const slug = route.path.replace('/recipes/', '')
+    // const selectedRecipe = 
+    console.log({
+      slug,
+      recipes,
+      found: recipes.value.find(item => item.slug === slug),
+      // route: route,
+      setSelected: true,
+      path: route.path.replace('/recipes/', '')
+    })
+    selectedRecipe.value = recipes.value.find(item => item.slug === slug)
+  }
 });
 
-// ✅ Watch for input changes, but prevent flickering
+// ✅ Watch for input changes and update the URL
 watch([keyword, ingredient, authorEmail], () => {
-  recipes.value = []
-  loading.value = true
+  recipes.value = [];
+  loading.value = true;
   pendingSearch.value = true;
-
+  
   // update the URL
   router.push({
     path: `/`,
@@ -157,13 +158,34 @@ watch([keyword, ingredient, authorEmail], () => {
         ingredient: ingredient.value || null,
         author_email: authorEmail.value || null,
         page: currentPage.value > 1 ? currentPage.value : null, // Only add page if > 1
-        recipeSlug: selectedRecipe.value?.slug || null, // Only add if a recipe is selected
       }).filter(([_, v]) => v !== null) // ✅ Remove null values
     ),
   });
   
   debouncedFetch();
 });
+
+const paginate = (pageData) => {
+  console.log({ pageData });
+
+  // Merge the existing query parameters with the new page value
+  router.push({
+    path: `/`,
+    query: {
+      ...route.query, // Retain existing query parameters
+      page: pageData, // Update only the page parameter
+    },
+  });
+
+  fetchRecipes(pageData);
+};
+
+
+// ✅ Debounced function to prevent flickering
+const debouncedFetch = debounce(() => {
+  pendingSearch.value = false;
+  fetchRecipes(1);
+}, 1500);
 </script>
 <style scoped>
 /* ✨ Fade and Slide Animation */

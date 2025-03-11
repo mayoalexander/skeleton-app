@@ -4,26 +4,15 @@
       <div class="mx-auto flex h-16 w-full items-center justify-between px-4 sm:px-6 lg:px-8">
         
         <!-- 🍔 Mobile Menu Button (only shows on mobile) -->
-        <button 
-          @click="toggleSearch"
-          class="lg:hidden -m-2.5 p-2.5 text-gray-600 hover:text-gray-900 search-button"
-        >
-          <span class="sr-only">Toggle Search</span>
+        <button @click="toggleSearch" class="text-gray-500 hover:text-gray-700">
+          <span class="sr-only">Search</span>
           <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            <circle cx="11" cy="11" r="8" stroke-linecap="round" stroke-linejoin="round"></circle>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"></path>
           </svg>
         </button>
-
         <!-- 🏠 App Title -->
         <h1 class="text-xl font-semibold text-gray-800">Recipe Search 3000</h1>
-
-        <!-- 🔐 Login Placeholder (Replaces User Icon) -->
-        <!-- <button class="flex items-center gap-2 text-gray-700 hover:text-gray-900">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 0 0-8 0v2M12 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8z" />
-          </svg>
-          <span class="hidden sm:inline">Login</span>
-        </button> -->
       </div>
     </header>
 
@@ -66,7 +55,7 @@
 
     <aside 
       :class="[
-        'fixed inset-y-0 left-0 w-72 bg-white shadow-lg transform transition-transform z-50 lg:hidden',
+        'fixed inset-y-0 left-0 w-96 px-4 bg-white shadow-lg transform transition-transform z-50 lg:hidden',
         isSearchOpen ? 'translate-x-0' : '-translate-x-full'
       ]"
     >
