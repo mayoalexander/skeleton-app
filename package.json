@@ -5,6 +5,7 @@
         "dev": "vite",
         "build": "vite build",
         "mysql": "docker exec -it skeleton-app-mysql-1 bash -c \"mysql -uroot -ppassword\"",
+        "demo:mayo": "bash demo-mayo.sh",
         "cypress:install": "npx cypress install",
         "cypress:open": "npx cypress open",
         "cypress:run": "npx cypress run"

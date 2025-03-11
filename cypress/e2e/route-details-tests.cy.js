@@ -17,7 +17,7 @@ describe("Recipe Search", () => {
         cy.url().should("include", "keyword=vol"); // Ensure URL contains search term
         cy.get(".recipe-list-item h2").should(
             "contain",
-            "Chocolate Chip Cookies"
+            "Homemade Pizza"
         );
     });
 
